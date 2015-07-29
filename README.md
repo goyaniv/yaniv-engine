@@ -58,33 +58,37 @@ Fast, battle tested, Yaniv Engine with fully REST API
     "stack": [{
         "id": 5,
     }],
-    "user": {
-        "name": "Yann",
-        "hand": {
-          "cards": [1,2,3],
-          "value": 7,
-          "size": 5
-        },
-        "score": 23,
-        "state": {
-          "yaniv": false,
-          "asaf": false,
-          "playing": false,
-          "ready": true
-        }
+    "players": [{
+      "name": "Yann",
+      "hand": {
+        "cards": [1,2,3],
+        "value": 7,
+        "size": 5
+      },
+      "score": 23,
+      "state": {
+        "yaniv": false,
+        "asaf": false,
+        "playing": false,
+        "ready": true,
+        "loser": false
+      }
     },
-    "opponents": [{
-        "name": "Etienne",
-        "hand": {
-          "size": 5
-        },
-        "score": 23,
-        "state": {
-          "yaniv": false,
-          "asaf": false,
-          "playing": false,
-          "ready": true
-        }
+    {
+      "name": "Etienne",
+      "hand": {
+        "cards": [1,2,3],
+        "value": 7,
+        "size": 5
+      },
+      "score": 23,
+      "state": {
+        "yaniv": false,
+        "asaf": false,
+        "playing": false,
+        "ready": true
+        "loser": false
+      }
     }],
     "action_last": {
       "name": "card_take",
