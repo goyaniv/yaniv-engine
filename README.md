@@ -52,12 +52,12 @@ Fast, battle tested, Yaniv Engine with fully REST API
     "name": "toto",
     "yaniv_at": 5,
     "max_score": 100,
-    "started": true,
-    "ended": false,
     "round": 1,
-    "stack": [{
-        "id": 5,
-    }],
+    "stack": [7,10],
+    "state": {
+      "started": true,
+      "ended": false
+    },
     "players": [{
       "name": "Yann",
       "hand": {
@@ -113,14 +113,11 @@ Fast, battle tested, Yaniv Engine with fully REST API
 `DELETE` /game/:name
 
 ## Player
-### Get player info
-`GET` /game/:name/player/:name
 ### Add Player
 `POST` /game/:name/player
 ```
 {
   "name": "Yann",
-  "visitor": true,
   "ready": false
 }
 ```
@@ -129,9 +126,11 @@ Fast, battle tested, Yaniv Engine with fully REST API
 
 ### Update Player
 `UPDATE` /game/:name/player/:name
+```
 {
   "name": "Etienne"
 }
+```
 
 ## Action
 ### Take card
