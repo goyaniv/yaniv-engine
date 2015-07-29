@@ -6,6 +6,7 @@ Fast, battle tested, Yaniv Engine with fully REST API
 ## Game
 ### List All games
 `GET` /game
+```
 {
   [
     {
@@ -42,8 +43,10 @@ Fast, battle tested, Yaniv Engine with fully REST API
     }
   ]
 }
+```
 ### Get game info
 `GET` /game/:name?viewer=Yann
+```
 {
   {
     "name": "toto",
@@ -92,7 +95,7 @@ Fast, battle tested, Yaniv Engine with fully REST API
     } 
   }
 }
-
+```
 ### Create game
 `POST` /game
 ```
@@ -129,12 +132,20 @@ Fast, battle tested, Yaniv Engine with fully REST API
 ## Action
 ### Take card
 `POST` /game/:name/player/:name/action/takecard
+```
 {
   "take": 3,
   "discard": [4,5,6]
 }
+```
 ### Yaniv
 `POST` /game/:name/player/:name/action/yaniv
 
 ### Asaf
 `POST` /game/:name/player/:name/action/asaf
+```
+{
+  "try_asaf": true
+}
+```
+```
