@@ -45,7 +45,7 @@ Fast, battle tested, Yaniv Engine with fully REST API
 }
 ```
 ### Get game info
-`GET` /game/:name?viewer=Yann
+`GET` /game/:name
 ```
 {
   {
@@ -63,7 +63,7 @@ Fast, battle tested, Yaniv Engine with fully REST API
       "hand": {
         "cards": [1,2,3],
         "value": 7,
-        "size": 5
+        "size": 3
       },
       "score": 23,
       "state": {
@@ -77,7 +77,9 @@ Fast, battle tested, Yaniv Engine with fully REST API
     {
       "name": "Etienne",
       "hand": {
-        "size": 5
+        "cards": [8,19,16],
+        "value": 24,
+        "size": 3
       },
       "score": 23,
       "state": {
@@ -149,4 +151,10 @@ Fast, battle tested, Yaniv Engine with fully REST API
   "try_asaf": true
 }
 ```
+### Ready
+`POST` /game/:name/player/:name/action/ready
+```
+{
+  "ready": true
+}
 ```
