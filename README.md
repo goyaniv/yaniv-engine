@@ -77,8 +77,6 @@ Fast, battle tested, Yaniv Engine with fully REST API
     {
       "name": "Etienne",
       "hand": {
-        "cards": [1,2,3],
-        "value": 7,
         "size": 5
       },
       "score": 23,
