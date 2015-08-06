@@ -4,157 +4,137 @@ Fast, battle tested, Yaniv Engine with fully REST API
 # REST API
 
 ## Game
-### List All games
-`GET` /game
+### Create
+`POST /games`
+#### Request data
 ```
 {
-  [
-    {
-      "name": "toto",
-      "yaniv_at": 5,
-      "max_score": 100,
-      "started": true,
-      "ended": false,
-      "round": 1,
-      "players": [
-        {
-          "name": "Yann"
-        },
-        {
-          "name": "Etienne"
-        }
-      ]
-    },
-    {
-      "name": "tata",
-      "yaniv_at": 5,
-      "max_score": 100,
-      "started": true,
-      "ended": false,
-      "round": 17,
-      "players": [
-        {
-          "name": "Brousse"
-        },
-        {
-          "name": "raphZen"
-        }
-      ]
-    }
-  ]
+	"name": String,
+	"params": {
+		"max_score": Number,
+		"yaniv_at": Number
+	}
 }
 ```
-### Get game info
-`GET` /game/:name
+#### Response data
+=> `GET /game/:name`
+
+### Delete
+`DELETE /game/:name`
+
+### Get
+`GET /game/:name`
+#### Response data
 ```
 {
-  {
-    "name": "toto",
-    "yaniv_at": 5,
-    "max_score": 100,
-    "round": 1,
-    "stack": [7,10],
-    "state": {
-      "started": true,
-      "ended": false
-    },
-    "players": [{
-      "name": "Yann",
-      "hand": {
-        "cards": [1,2,3],
-        "value": 7,
-        "size": 3
-      },
-      "score": 23,
-      "state": {
-        "yaniv": false,
-        "asaf": false,
-        "playing": false,
-        "ready": true,
-        "loser": false
-      }
-    },
-    {
-      "name": "Etienne",
-      "hand": {
-        "cards": [8,19,16],
-        "value": 24,
-        "size": 3
-      },
-      "score": 23,
-      "state": {
-        "yaniv": false,
-        "asaf": false,
-        "playing": false,
-        "ready": true
-        "loser": false
-      }
-    }],
-    "action_last": {
-      "name": "card_take",
-      "options": {
-        "discarded": [3, 4, 5],
-        "taken": 6
-      }
-    } 
-  }
+	"name": String,
+	"params": {
+		"max_score": Number,
+		"yaniv_at": Number
+	},
+	"players": [{
+		"hand": {
+			"cards": [Number],
+			"size": Number,
+			"value": Number
+		},
+		"name": String,
+		"score": Number,
+		"state": {
+			"asaf": Boolean,
+			"loser": Boolean,
+			"playing": Boolean,
+			"ready": Boolean,
+			"yaniv": Boolean
+		}
+	}],
+	"round": Number,
+	"stack": {
+		"cards": [Number]
+	},
+	"state": {
+		"ended": Boolean,
+		"started": Boolean,
+		"yaniv_battle": Boolean
+	}
 }
 ```
-### Create game
-`POST` /game
+
+### List
+`GET /games`
+#### Response data
 ```
-{
-  "name": "toto",
-  "yaniv_at": 5,
-  "max_score": 100
-}
+[{
+	"name": String,
+	"params": {
+		"max_score": Number,
+		"yaniv_at": Number
+	},
+	"players": [{
+		"name": String
+	}],
+	"round": Number,
+	"state": {
+		"ended": Boolean,
+		"started": Boolean
+	}
+}]
 ```
-### Delete game
-`DELETE` /game/:name
 
 ## Player
-### Add Player
-`POST` /game/:name/player
+### Add
+`POST /game/:name/players`
+#### Request data
 ```
 {
-  "name": "Yann",
-  "ready": false
+	"name": String
 }
 ```
-### Delete Player
-`DELETE` /game/:name/player/:name
+#### Response data
+=> `GET /game/:name`
 
-### Update Player
-`UPDATE` /game/:name/player/:name
+### Remove
+`DELETE /game/:name/player/:name`
+#### Response data
+=> `GET /game/:name`
+
+### Update
+`PUT /game/:name/player/:name`
+#### Request data
 ```
 {
-  "name": "Etienne"
+	"name": String#Optional,
+	"state": {
+		"ready" Boolean
+	}#Optional
 }
 ```
+#### Response data
+=> `GET /game/:name`
 
 ## Action
-### Take card
-`POST` /game/:name/player/:name/action/takecard
-```
-{
-  "take": 3,
-  "discard": [4,5,6]
-}
-```
-### Yaniv
-`POST` /game/:name/player/:name/action/yaniv
-
 ### Asaf
-`POST` /game/:name/player/:name/action/asaf
+`POST /game/:name/player/:name/action/asaf`
+#### Request data
+```
+Boolean
+```
+#### Response data
+=> `GET /game/:name`
+
+### Take card
+`POST /game/:name/player/:name/action/takecard`
+#### Request data
 ```
 {
-  "try_asaf": true
+	"discard": [Number],
+	"take": Number
 }
 ```
-### Ready
-`POST` /game/:name/player/:name/action/ready
-```
-{
-  "ready": true
-}
-```
+#### Response data
+=> `GET /game/:name`
+
+### Yaniv
+`POST /game/:name/player/:name/action/yaniv`
+#### Response data
+=> `GET /game/:name`
