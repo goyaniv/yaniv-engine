@@ -103,3 +103,13 @@ func (g *Game) LastAsafRank() int {
 	}
 	return higherRank
 }
+
+//PlayerPlaying return the player playing
+func (g *Game) PlayerPlaying() *Player {
+	for _, p := range g.Players {
+		if p.State.Playing {
+			return p
+		}
+	}
+	return nil
+}
