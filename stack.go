@@ -62,6 +62,17 @@ func (s *Stack) Remove(id int) *Card {
 	return nil
 }
 
+// Contains return true if stack contains card id
+func (s *Stack) Contains(id int) bool {
+	// Remove card from deck and return the deleted card
+	for _, card := range s.Cards {
+		if card.ID == id {
+			return true
+		}
+	}
+	return false
+}
+
 // AddStack to another Stack
 func (s *Stack) AddStack(stack *Stack) {
 	// Merge two deck together

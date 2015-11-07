@@ -6,12 +6,13 @@ import (
 
 // Game struct
 type Game struct {
-	Name    string      `json:"name"`
-	Round   int         `json:"round"`
-	State   *GameState  `json:"state"`
-	Params  *GameParams `json:"params"`
-	Stack   *Stack      `json:"stack"`
-	Players []*Player   `json:"players"`
+	Name       string      `json:"name"`
+	Round      int         `json:"round"`
+	State      *GameState  `json:"state"`
+	Params     *GameParams `json:"params"`
+	Stack      *Stack      `json:"stack"`
+	Players    []*Player   `json:"players"`
+	stacktrash *Stack
 }
 
 // GameState struct defines the state of the game
@@ -39,11 +40,12 @@ func GameParamsNew() *GameParams {
 // GameNew Initialize a Game object
 func GameNew(name string) *Game {
 	return &Game{
-		Name:    name,
-		State:   GameStateNew(),
-		Params:  GameParamsNew(),
-		Players: make([]*Player, 0),
-		Stack:   StackNew(),
+		Name:       name,
+		State:      GameStateNew(),
+		Params:     GameParamsNew(),
+		Players:    make([]*Player, 0),
+		Stack:      StackNew(),
+		stacktrash: StackNew(),
 	}
 }
 
@@ -112,4 +114,9 @@ func (g *Game) PlayerPlaying() *Player {
 		}
 	}
 	return nil
+}
+
+func (g *Game) FlushStack() {
+	g.stacktrash.AddStack(g.Stack)
+	g.Stack = StackNew()
 }

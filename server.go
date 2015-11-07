@@ -36,3 +36,13 @@ func (s *Server) MarshalJSON() ([]byte, error) {
 func (s *Server) AddGame(g *Game) {
 	(*s).Games = append((*s).Games, g)
 }
+
+// FindGame search for a game object in the server
+func (s *Server) FindGame(name string) *Game {
+	for _, game := range s.Games {
+		if game.Name == name {
+			return game
+		}
+	}
+	return nil
+}

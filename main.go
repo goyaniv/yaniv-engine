@@ -1,11 +1,11 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
+
+var s *Server
 
 func main() {
-	s := ServerNew()
+	s = ServerNew()
 	p := PlayerNew("gégé")
 	p.Hand.Add(CardNew(1, 1, "spade"))
 	p.Hand.Add(CardNew(2, 2, "spade"))
@@ -16,4 +16,5 @@ func main() {
 	fmt.Println(string(json))
 	json, _ = g.MarshalJSON()
 	fmt.Println(string(json))
+	LaunchHTTP()
 }
