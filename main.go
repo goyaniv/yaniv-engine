@@ -2,16 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/goyaniv/yaniv-engine/model"
 )
 
 func main() {
-
-	s := model.ServerNew()
-	p := model.PlayerNew("gégé")
-	p.Hand.Add(model.CardNew(1, 1, "spade"))
-	g := model.GameNew("pouette")
+	s := ServerNew()
+	p := PlayerNew("gégé")
+	p.Hand.Add(CardNew(1, 1, "spade"))
+	g := GameNew("pouette")
 	g.AddPlayer(p)
+	s.AddGame(g)
 	json, _ := s.MarshalJSON()
 	fmt.Println(string(json))
 }

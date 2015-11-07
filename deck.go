@@ -1,19 +1,20 @@
-package model
+package main
 
 import (
 	"encoding/json"
 )
 
+// Deck struct
 type Deck struct {
 	Stack
 }
 
-// Return the pointer of a new allocated Deck
+// DeckNew returns the pointer of a new allocated Deck
 func DeckNew() *Deck {
 	return &Deck{*StackNew()}
 }
 
-// Return the JSON representation of the deck
+// MarshalJSON returns the JSON representation of the deck
 func (d *Deck) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Cards []int `json:"cards"`
@@ -27,7 +28,7 @@ func (d *Deck) MarshalJSON() ([]byte, error) {
 
 }
 
-// Return the total value of deck
+// Value returns the total value of deck
 func (d *Deck) Value() int {
 	j := 0
 	for _, card := range d.Cards {
@@ -36,12 +37,12 @@ func (d *Deck) Value() int {
 	return j
 }
 
-// Return the number of cards in the deck
+// Size returns the number of cards in the deck
 func (d *Deck) Size() int {
 	return len(d.Cards)
 }
 
-// Initialize the complete card game
+// InitReferenceDeck initialize the complete card game
 func (d *Deck) InitReferenceDeck() {
 	j := 1
 	colours := [...]string{"spade", "heart", "diam", "club"}
