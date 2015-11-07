@@ -82,3 +82,24 @@ func (g *Game) PlayersNames() []string {
 func (g *Game) AddPlayer(p *Player) {
 	(*g).Players = append((*g).Players, p)
 }
+
+// HasPlayerYaniv checks if a player has yanived
+func (g *Game) HasPlayerYaniv() bool {
+	for _, p := range g.Players {
+		if p.State.Yaniv == true {
+			return true
+		}
+	}
+	return false
+}
+
+// LastAsafRank return the ranking of the last asafer
+func (g *Game) LastAsafRank() int {
+	higherRank := 0
+	for _, p := range g.Players {
+		if p.State.AsafRank > higherRank {
+			higherRank = p.State.AsafRank
+		}
+	}
+	return higherRank
+}
