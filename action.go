@@ -33,19 +33,20 @@ func Yaniv(g *Game, p *Player) bool {
 }
 
 // Play allows the player to discard cards and take one
-func Play(g *Game, p *Player, discard *Stack, take int) error {
+func Play(g *Game, p *Player, discard []int, take int) error {
+
 	if p != g.PlayerPlaying() {
 		return errors.New("Not the player turn")
 	}
-	if !discard.IsValid() {
-		return errors.New("Invalid discarded cards")
-	}
+	//if !discard.IsValid() {
+	//	return errors.New("Invalid discarded cards")
+	//}
 	if !g.Stack.Contains(take) && take != 0 {
 		return errors.New("Invalid taken card")
 	}
 	cardtaken := g.Stack.Remove(take)
 	g.FlushStack()
-	g.Stack.AddStack(discard)
+	//g.Stack.AddStack(discard)
 	p.Hand.Add(cardtaken)
 
 	return nil

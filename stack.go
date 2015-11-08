@@ -52,6 +52,12 @@ func (s *Stack) Add(c *Card) {
 
 // Remove card id in the stack
 func (s *Stack) Remove(id int) *Card {
+	// Remove 0 takes the first card on the stack
+	if id == 0 {
+		first := s.Cards[0]
+		(*s).Cards = append((*s).Cards[:0], (*s).Cards[1:]...)
+		return first
+	}
 	// Remove card from deck and return the deleted card
 	for i, card := range s.Cards {
 		if card.ID == id {
@@ -141,4 +147,16 @@ func (s Stack) Less(i, j int) bool {
 
 func (s Stack) Len() int {
 	return len(s.Cards)
+}
+
+// InitReference initialize the complete yaniv card game
+func (s *Stack) InitReference() {
+	j := 1
+	colours := [...]string{"spade", "heart", "diam", "club"}
+	for _, colour := range colours {
+		for i := 1; i < 14; i++ {
+			(*s).Cards = append((*s).Cards, CardNew(j, i, colour))
+			j++
+		}
+	}
 }

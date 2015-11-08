@@ -41,15 +41,3 @@ func (d *Deck) Value() int {
 func (d *Deck) Size() int {
 	return len(d.Cards)
 }
-
-// InitReferenceDeck initialize the complete card game
-func (d *Deck) InitReferenceDeck() {
-	j := 1
-	colours := [...]string{"spade", "heart", "diam", "club"}
-	for _, colour := range colours {
-		for i := 1; i < 14; i++ {
-			(*d).Cards = append((*d).Cards, CardNew(j, i, colour))
-			j++
-		}
-	}
-}
