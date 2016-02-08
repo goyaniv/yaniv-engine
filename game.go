@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 // Game struct
@@ -20,6 +21,7 @@ type Game struct {
 type GameState struct {
 	Started bool `json:"started"`
 	Ended   bool `json:"ended"`
+	Flushed bool `json:"flushed"`
 }
 
 // GameParams defines the parameters at the game creation
@@ -34,8 +36,11 @@ func GameStateNew() *GameState {
 }
 
 // GameParamsNew Initialize a GameParams object
-func GameParamsNew() *GameParams {
-	return &GameParams{}
+func GameParamsNew(yanivat int, maxscore int) *GameParams {
+	return &GameParams{
+		YanivAt:  yanivat,
+		MaxScore: maxscore,
+	}
 }
 
 // GameNew Initialize a Game object
@@ -49,7 +54,7 @@ func GameNew(name string) *Game {
 	return &Game{
 		Name:        name,
 		State:       GameStateNew(),
-		Params:      GameParamsNew(),
+		Params:      GameParamsNew(5, 100),
 		Players:     make([]*Player, 0),
 		Stack:       stack,
 		hiddenstack: hiddenstack,
@@ -107,8 +112,8 @@ func (g *Game) HasPlayerYaniv() bool {
 func (g *Game) LastAsafRank() int {
 	higherRank := 0
 	for _, p := range g.Players {
-		if p.State.AsafRank > higherRank {
-			higherRank = p.State.AsafRank
+		if p.State.asafRank > higherRank {
+			higherRank = p.State.asafRank
 		}
 	}
 	return higherRank
@@ -118,6 +123,17 @@ func (g *Game) LastAsafRank() int {
 func (g *Game) PlayerPlaying() *Player {
 	for _, p := range g.Players {
 		if p.State.Playing {
+			return p
+		}
+	}
+	return nil
+}
+
+//PlayerPreviousPlaying return the player who
+//previously played
+func (g *Game) PlayerPreviousPlaying() *Player {
+	for _, p := range g.Players {
+		if p.State.previousPlaying {
 			return p
 		}
 	}
@@ -147,4 +163,32 @@ func (g *Game) RemovePlayer(name string) {
 			(*g).Players = append((*g).Players[:i], (*g).Players[i+1:]...)
 		}
 	}
+}
+
+//IsAllPlayersReady return true if all players in game are ready
+func (g *Game) IsAllPlayersReady() bool {
+	for _, p := range g.Players {
+		if !p.State.Ready {
+			return false
+		}
+	}
+	return true
+}
+
+// Start the game and give cards to all players
+func (g *Game) Start() error {
+	if !g.IsAllPlayersReady() {
+		return errors.New("All the player are not ready")
+	}
+	if len(g.Players) < 2 {
+		return errors.New("There is not enought players")
+	}
+	g.State.Started = true
+	g.Players[0].State.Playing = true
+	for _, player := range g.Players {
+		for i := 0; i < 5; i++ {
+			player.Hand.Add(g.hiddenstack.Remove(0))
+		}
+	}
+	return nil
 }

@@ -1,35 +1,40 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+)
 
 // LaunchHTTP initialize http routes
 func LaunchHTTP() {
 	r := gin.Default()
 
 	// Games
-	r.GET("/game/:game", gingetgame)
-	r.GET("/games", ginlistgames)
-	r.POST("/games", gincreategame)
-	//r.DELETE("/game/:game", gindeletegame)
+	r.GET("/game/:game", handlergetgame)
+	r.GET("/games", handlerlistgames)
+	r.POST("/games", handlercreategame)
+	//r.DELETE("/game/:game", handlerdeletegame)
 
 	// Players
-	r.POST("/game/:game/players", ginaddplayer)
-	r.PUT("/game/:game/player/:player", ginupdateplayer)
-	r.DELETE("/game/:game/player/:player", ginremoveplayer)
+	r.POST("/game/:game/players", handleraddplayer)
+	r.PUT("/game/:game/player/:player", handlerupdateplayer)
+	r.DELETE("/game/:game/player/:player", handlerremoveplayer)
 
 	// Actions
-	r.POST("/game/:game/player/:player/action/asaf", ginactionasaf)
-	r.POST("/game/:game/player/:player/action/yaniv", ginactionyaniv)
-	r.POST("/game/:game/player/:player/action/takecard", ginactiontakecard)
+	r.POST("/game/:game/player/:player/action/asaf", handleractionasaf)
+	r.POST("/game/:game/player/:player/action/yaniv", handleractionyaniv)
+	r.POST("/game/:game/player/:player/action/takecard", handleractiontakecard)
 
-	r.Run(":8000")
+	r.Run(":3001")
 }
 
-func ginlistgames(c *gin.Context) {
+func handlerlistgames(c *gin.Context) {
+	fmt.Println(s)
 	c.JSON(200, s)
 }
 
-func gingetgame(c *gin.Context) {
+func handlergetgame(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -38,11 +43,11 @@ func gingetgame(c *gin.Context) {
 	}
 }
 
-func gincreategame(c *gin.Context) {
+func handlercreategame(c *gin.Context) {
 	game := GameNew("")
 
 	if c.BindJSON(game) != nil {
-		c.JSON(400, gin.H{"message": "cannot decode the json sent"})
+		c.JSON(400, gin.H{"message": "cannot decode the json sen t"})
 	}
 	if s.FindGame(game.Name) != nil {
 		c.JSON(409, gin.H{"message": "game already exists"})
@@ -52,7 +57,7 @@ func gincreategame(c *gin.Context) {
 	}
 }
 
-func ginaddplayer(c *gin.Context) {
+func handleraddplayer(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -71,7 +76,7 @@ func ginaddplayer(c *gin.Context) {
 	}
 }
 
-func ginremoveplayer(c *gin.Context) {
+func handlerremoveplayer(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -85,7 +90,7 @@ func ginremoveplayer(c *gin.Context) {
 	}
 }
 
-func ginupdateplayer(c *gin.Context) {
+func handlerupdateplayer(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -103,7 +108,7 @@ func ginupdateplayer(c *gin.Context) {
 	}
 }
 
-func ginactionasaf(c *gin.Context) {
+func handleractionasaf(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -112,16 +117,20 @@ func ginactionasaf(c *gin.Context) {
 		if player == nil {
 			c.JSON(404, gin.H{"message": "player does not exists in this game"})
 		} else {
-			if Asaf(game, player) {
-				c.JSON(200, game)
+			if game.State.Started {
+				if Asaf(game, player) {
+					c.JSON(200, game)
+				} else {
+					c.JSON(403, gin.H{"message": "player cannot asaf"})
+				}
 			} else {
-				c.JSON(403, gin.H{"message": "player cannot asaf"})
+				c.JSON(403, gin.H{"message": "game not started"})
 			}
 		}
 	}
 }
 
-func ginactionyaniv(c *gin.Context) {
+func handleractionyaniv(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -130,10 +139,14 @@ func ginactionyaniv(c *gin.Context) {
 		if player == nil {
 			c.JSON(404, gin.H{"message": "player does not exists in this game"})
 		} else {
-			if Yaniv(game, player) {
-				c.JSON(200, game)
+			if game.State.Started {
+				if Yaniv(game, player) {
+					c.JSON(200, game)
+				} else {
+					c.JSON(403, gin.H{"message": "player cannot yaniv"})
+				}
 			} else {
-				c.JSON(403, gin.H{"message": "player cannot yaniv"})
+				c.JSON(403, gin.H{"message": "game not started"})
 			}
 		}
 	}
@@ -144,7 +157,7 @@ type incomingjson struct {
 	Take    int   `json:"take"`
 }
 
-func ginactiontakecard(c *gin.Context) {
+func handleractiontakecard(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -157,10 +170,14 @@ func ginactiontakecard(c *gin.Context) {
 			if c.BindJSON(&json) != nil {
 				c.JSON(400, gin.H{"message": "cannot decode json sent"})
 			} else {
-				if err := Play(game, player, json.Discard, json.Take); err == nil {
-					c.JSON(200, game)
+				if game.State.Started {
+					if err := Play(game, player, json.Discard, json.Take); err == nil {
+						c.JSON(200, game)
+					} else {
+						c.JSON(403, gin.H{"message": err.Error()})
+					}
 				} else {
-					c.JSON(403, gin.H{"message": err.Error()})
+					c.JSON(403, gin.H{"message": "game not started"})
 				}
 			}
 		}
