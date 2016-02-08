@@ -3,6 +3,7 @@
 *.a
 *.so
 yaniv-engine
+gin-bin
 
 # Folders
 _obj
