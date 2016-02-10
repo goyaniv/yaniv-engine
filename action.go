@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"sort"
 )
 
@@ -42,31 +41,17 @@ func Play(g *Game, p *Player, discard []int, take int) error {
 	if g.HasPlayerYaniv() {
 		return errors.New("The round has stopped")
 	}
+	nbflash, errflash := canFlash(g, discard)
+
 	// If player is not playing, he just have the square
 	// or the flash options
 	if p != g.PlayerPlaying() {
-		// if it seems to be a square or a flash
-		if (g.Stack.Len()+len(discard) == 4) || (p == g.PlayerPreviousPlaying() && len(discard) == 1) {
-			fmt.Println("on rentre dans le fast")
-			var idcardstack []int
-			for _, card := range g.Stack.Cards {
-				idcardstack = append(idcardstack, card.ID)
-			}
-			for _, idcard := range discard {
-				idcardstack = append(idcardstack, idcard)
-			}
-			sort.Ints(idcardstack)
-			for i, idcard := range idcardstack {
-				// if not first loop
-				if i != 0 {
-					// +13 because there is 13 cards and we are
-					// searching for card with exact same values
-					if idcardstack[i-1] != idcard+13 {
-						return errors.New("Not the player turn")
-					}
-				}
-			}
-			// ok, all checks passed, he can fast his square or flash
+		// he fails flash
+		if errflash != nil {
+			return errflash
+		}
+		// big flash or flash?
+		if nbflash == 4 || (nbflash == 2 && g.PlayerPreviousPlaying() == p) {
 			discardedcards, err := p.Discard(discard)
 			if err != nil {
 				return err
@@ -74,22 +59,51 @@ func Play(g *Game, p *Player, discard []int, take int) error {
 			g.Stack.AddStack(discardedcards)
 		}
 	} else {
-		fmt.Println("on rentre dans le non fast")
-
 		if !g.Stack.Contains(take) && take != 0 {
 			return errors.New("Invalid taken card")
 		}
-		discardedcards, err := p.Discard(discard)
-		if err != nil {
-			return err
-		}
-		if take == 0 {
-			p.Hand.Add(g.hiddenstack.Remove(0))
+		if errflash == nil && nbflash == 4 {
+			discardedcards, err := p.Discard(discard)
+			if err != nil {
+				return err
+			}
+			g.Stack.AddStack(discardedcards)
 		} else {
-			p.Hand.Add(g.Stack.Remove(take))
+			discardedcards, err := p.Discard(discard)
+			if err != nil {
+				return err
+			}
+			if take == 0 {
+				p.Hand.Add(g.hiddenstack.Remove(0))
+			} else {
+				p.Hand.Add(g.Stack.Remove(take))
+			}
+			g.FlushStack()
+			g.Stack.AddStack(discardedcards)
 		}
-		g.FlushStack()
-		g.Stack.AddStack(discardedcards)
 	}
 	return nil
+}
+
+func canFlash(g *Game, discard []int) (int, error) {
+	// if it seems to be a square or a flash
+	var idcardstack []int
+	for _, card := range g.Stack.Cards {
+		idcardstack = append(idcardstack, card.ID)
+	}
+	for _, idcard := range discard {
+		idcardstack = append(idcardstack, idcard)
+	}
+	sort.Ints(idcardstack)
+	for i, idcard := range idcardstack {
+		// if not first loop
+		if i != 0 {
+			// +13 because there is 13 cards and we are
+			// searching for card with exact same values
+			if idcardstack[i-1]%13 != idcard%13 {
+				return 0, errors.New("Can't Flash theses cards")
+			}
+		}
+	}
+	return len(idcardstack), nil
 }
