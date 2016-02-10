@@ -1,4 +1,5 @@
 # yaniv-engine
+[![Go Report Card](https://goreportcard.com/badge/github.com/goyaniv/yaniv-engine)](https://goreportcard.com/report/github.com/goyaniv/yaniv-engine)
 Fast, battle tested, Yaniv Engine with fully REST API
 
 # REST API
