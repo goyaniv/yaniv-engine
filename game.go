@@ -157,12 +157,14 @@ func (g *Game) FlushStack() {
 }
 
 // RemovePlayer removes player if exists
-func (g *Game) RemovePlayer(name string) {
+func (g *Game) RemovePlayer(name string) error {
 	for i, player := range g.Players {
 		if player.Name == name {
 			(*g).Players = append((*g).Players[:i], (*g).Players[i+1:]...)
+			return nil
 		}
 	}
+	return errors.New("Player does not exists in this game")
 }
 
 //IsAllPlayersReady return true if all players in game are ready

@@ -82,8 +82,10 @@ func (s *Stack) Contains(id int) bool {
 // AddStack to another Stack
 func (s *Stack) AddStack(stack *Stack) {
 	// Merge two deck together
-	for i := range stack.Cards {
-		s.Add(stack.Remove(i))
+	for i, card := range stack.Cards {
+		if card != nil {
+			s.Add(stack.Remove(i))
+		}
 	}
 }
 
@@ -98,7 +100,30 @@ func (s *Stack) Shuffle() {
 
 // IsValid return true if the stack can be dropped in game
 func (s *Stack) IsValid() bool {
-	return s.IsSequence() || s.IsMultiple() || len(s.Cards) == 1
+	if s.IsConsistent() {
+		return s.IsSequence() || s.IsMultiple() || len(s.Cards) == 1
+	}
+	return false
+}
+
+// IsConsistent checks if the stack seems legit
+func (s *Stack) IsConsistent() bool {
+	if len(s.Cards) > 5 {
+		return false
+	}
+	for _, card := range s.Cards {
+		if card == nil {
+			return false
+		}
+	}
+	for i := 0; i < len(s.Cards)-1; i++ {
+		for j := i + 1; j < len(s.Cards); j++ {
+			if s.Cards[i].ID == s.Cards[j].ID {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // IsMultiple return true if all cards have the same value and size > 1

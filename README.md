@@ -99,15 +99,12 @@ Fast, battle tested, Yaniv Engine with fully REST API
 #### Response data
 => `GET /game/:name`
 
-### Update
+### Ready
 `PUT /game/:name/player/:name`
 #### Request data
 ```
 {
-	"name": String#Optional,
-	"state": {
-		"ready" Boolean
-	}#Optional
+	"ready": Boolean
 }
 ```
 #### Response data

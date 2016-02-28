@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -45,4 +46,15 @@ func (s *Server) FindGame(name string) *Game {
 		}
 	}
 	return nil
+}
+
+// RemoveGame removes a game object in the server
+func (s *Server) RemoveGame(name string) error {
+	for i, game := range s.Games {
+		if game.Name == name {
+			s.Games = append((*s).Games[:i], (*s).Games[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("Game not found")
 }

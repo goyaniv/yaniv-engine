@@ -14,11 +14,11 @@ func LaunchHTTP() {
 	r.GET("/game/:game", handlergetgame)
 	r.GET("/games", handlerlistgames)
 	r.POST("/games", handlercreategame)
-	//r.DELETE("/game/:game", handlerdeletegame)
+	r.DELETE("/game/:game", handlerdeletegame)
 
 	// Players
 	r.POST("/game/:game/players", handleraddplayer)
-	r.PUT("/game/:game/player/:player", handlerupdateplayer)
+	r.PUT("/game/:game/player/:player", handlerreadyplayer)
 	r.DELETE("/game/:game/player/:player", handlerremoveplayer)
 
 	// Actions
@@ -40,6 +40,15 @@ func handlergetgame(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "game not found"})
 	} else {
 		c.JSON(200, game)
+	}
+}
+
+func handlerdeletegame(c *gin.Context) {
+	err := s.RemoveGame(c.Param("game"))
+	if err != nil {
+		c.JSON(404, gin.H{"message": err.Error()})
+	} else {
+		c.JSON(200, nil)
 	}
 }
 
@@ -81,16 +90,16 @@ func handlerremoveplayer(c *gin.Context) {
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
 	} else {
-		if game.FindPlayer(c.Param("player")) == nil {
-			c.JSON(404, gin.H{"message": "player does not exists in this game"})
+		err := game.RemovePlayer(c.Param("player"))
+		if err != nil {
+			c.JSON(404, gin.H{"message": err.Error()})
 		} else {
-			game.RemovePlayer(c.Param("player"))
 			c.JSON(200, game)
 		}
 	}
 }
 
-func handlerupdateplayer(c *gin.Context) {
+func handlerreadyplayer(c *gin.Context) {
 	game := s.FindGame(c.Param("game"))
 	if game == nil {
 		c.JSON(404, gin.H{"message": "game not found"})
@@ -99,10 +108,19 @@ func handlerupdateplayer(c *gin.Context) {
 		if player == nil {
 			c.JSON(404, gin.H{"message": "player does not exists in this game"})
 		} else {
-			if c.BindJSON(player) == nil {
+			var json map[string]interface{}
+			err := c.BindJSON(&json)
+			if err == nil {
+				player.State.Ready = json["ready"].(bool)
+				if game.IsAllPlayersReady() {
+					err = game.Start()
+					if err != nil {
+						c.JSON(400, gin.H{"message": err.Error()})
+					}
+				}
 				c.JSON(200, game)
 			} else {
-				c.JSON(400, gin.H{"message": "cannot decode json sent"})
+				c.JSON(400, gin.H{"message": err.Error()})
 			}
 		}
 	}
