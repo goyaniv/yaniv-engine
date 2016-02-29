@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 // Player struct
@@ -43,21 +44,23 @@ func (p *Player) Discard(discard []int) (*Stack, error) {
 	// check if all the cards are present in player deck
 	deckdiscard := StackNew()
 
-	for _, card := range discard {
-		if !p.HasCard(card) {
+	for _, cardid := range discard {
+		if !p.HasCard(cardid) {
 			return nil, errors.New("You can't discard these cards")
 		}
-	}
-
-	for _, card := range discard {
-		deckdiscard.Add(p.Hand.Remove(card))
+		card := p.Hand.Remove(cardid)
+		if card == nil {
+			return nil, errors.New("You can't discard these cards")
+		}
+		deckdiscard.Add(card)
 	}
 
 	if !deckdiscard.IsValid() {
 		p.Hand.AddStack(deckdiscard)
 		return nil, errors.New("Invalid discarded deck")
 	}
-
+	fmt.Println("OK Discard is valid in player.go")
+	fmt.Println(deckdiscard)
 	return deckdiscard, nil
 }
 

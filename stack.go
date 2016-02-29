@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"sort"
 	"time"
@@ -35,6 +36,7 @@ func (s *Stack) ArrayID() []int {
 	// Return array of cards id
 	var arrayid []int
 	for _, card := range s.Cards {
+		fmt.Println(card)
 		arrayid = append(arrayid, card.ID)
 	}
 	return arrayid
@@ -82,10 +84,8 @@ func (s *Stack) Contains(id int) bool {
 // AddStack to another Stack
 func (s *Stack) AddStack(stack *Stack) {
 	// Merge two deck together
-	for i, card := range stack.Cards {
-		if card != nil {
-			s.Add(stack.Remove(i))
-		}
+	for _, card := range stack.Cards {
+		s.Add(stack.Remove(card.ID))
 	}
 }
 

@@ -80,6 +80,7 @@ func Play(g *Game, p *Player, discard []int, take int) error {
 			}
 			g.FlushStack()
 			g.Stack.AddStack(discardedcards)
+			g.NextPlayer()
 		}
 	}
 	return nil

@@ -167,6 +167,33 @@ func (g *Game) RemovePlayer(name string) error {
 	return errors.New("Player does not exists in this game")
 }
 
+// NextPlayer change the player turn
+func (g *Game) NextPlayer() {
+	ppp := g.PlayerPreviousPlaying()
+	pp := g.PlayerPlaying()
+	pa, _ := g.PlayerAfter(g.PlayerPlaying())
+	if ppp != nil {
+		ppp.State.previousPlaying = false
+	}
+	pp.State.previousPlaying = true
+	pp.State.Playing = false
+	pa.State.Playing = true
+}
+
+// PlayerAfter return playing after a player
+func (g *Game) PlayerAfter(p *Player) (*Player, error) {
+	for i, player := range g.Players {
+		if player == p {
+			// last player in slice
+			if i == len(g.Players)-1 {
+				return g.Players[0], nil
+			}
+			return g.Players[i], nil
+		}
+	}
+	return nil, errors.New("Next player error")
+}
+
 //IsAllPlayersReady return true if all players in game are ready
 func (g *Game) IsAllPlayersReady() bool {
 	for _, p := range g.Players {
