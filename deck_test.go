@@ -44,3 +44,15 @@ func TestDeckSequence(t *testing.T) {
 	d.Add(CardNew(5, 5, "diam"))
 	assert.True(t, d.IsSequence(), "Deck must be a sequence")
 }
+
+func TestRemoveCard(t *testing.T) {
+	d := DeckNew()
+	d.Add(CardNew(1, 1, "spade"))
+	d.Add(CardNew(2, 2, "heart"))
+	d.Add(CardNew(3, 3, "diam"))
+	c := d.Remove(0)
+	assert.Equal(t, d.Len(), 2, "Len must be 2")
+	assert.Equal(t, c.ID, 1, "ID must be 1")
+	c = d.Remove(2)
+	assert.Equal(t, c.ID, 2, "ID must be 2")
+}

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 )
 
 // Player struct
@@ -59,8 +58,6 @@ func (p *Player) Discard(discard []int) (*Stack, error) {
 		p.Hand.AddStack(deckdiscard)
 		return nil, errors.New("Invalid discarded deck")
 	}
-	fmt.Println("OK Discard is valid in player.go")
-	fmt.Println(deckdiscard)
 	return deckdiscard, nil
 }
 

@@ -152,8 +152,14 @@ func (g *Game) FindPlayer(name string) *Player {
 
 //FlushStack moves the previous visible cards in trash
 func (g *Game) FlushStack() {
+	if g.hiddenstack.Len() == 0 {
+		//g.hiddenstack = g.stacktrash
+		g.hiddenstack.AddStack(g.stacktrash)
+
+		g.hiddenstack.Shuffle()
+		//g.stacktrash = StackNew()
+	}
 	g.stacktrash.AddStack(g.Stack)
-	g.Stack = StackNew()
 }
 
 // RemovePlayer removes player if exists
@@ -174,8 +180,9 @@ func (g *Game) NextPlayer() {
 	pa, _ := g.PlayerAfter(g.PlayerPlaying())
 	if ppp != nil {
 		ppp.State.previousPlaying = false
+	} else {
+		pp.State.previousPlaying = true
 	}
-	pp.State.previousPlaying = true
 	pp.State.Playing = false
 	pa.State.Playing = true
 }
@@ -188,7 +195,7 @@ func (g *Game) PlayerAfter(p *Player) (*Player, error) {
 			if i == len(g.Players)-1 {
 				return g.Players[0], nil
 			}
-			return g.Players[i], nil
+			return g.Players[i+1], nil
 		}
 	}
 	return nil, errors.New("Next player error")
